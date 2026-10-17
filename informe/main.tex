@@ -1,0 +1,154 @@
+\documentclass[11pt,letterpaper]{article}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{lmodern}
+\usepackage[letterpaper,margin=2.35cm,headheight=22pt]{geometry}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{float}
+\usepackage{tcolorbox}
+\usepackage{fancyhdr}
+\usepackage{hyperref}
+
+\definecolor{ink}{HTML}{14282B}
+\definecolor{petrol}{HTML}{0C5968}
+\definecolor{copper}{HTML}{C7643B}
+\definecolor{mist}{HTML}{F3F7F7}
+\definecolor{line}{HTML}{CCD9D9}
+\definecolor{muted}{HTML}{587074}
+
+\hypersetup{
+  colorlinks=true,
+  linkcolor=petrol,
+  citecolor=petrol,
+  urlcolor=copper,
+  pdftitle={Text-to-SQL con QLoRA},
+  pdfauthor={Wilson Alejandro Calderón Argueta y Pablo Daniel Barillas Moreno}
+}
+
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\small\color{muted}Deep Learning y Sistemas Inteligentes}
+\rhead{\small\color{muted}Proyecto 3}
+\cfoot{\small\color{muted}\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\headrule}{\hbox to\headwidth{\color{line}\leaders\hrule height \headrulewidth\hfill}}
+
+\newtcolorbox{finding}[1]{
+  colback=mist,
+  colframe=petrol,
+  boxrule=0.6pt,
+  arc=2mm,
+  title=\textbf{#1},
+  coltitle=ink
+}
+
+\newcommand{\pending}{\textcolor{copper}{\textbf{Pendiente de medición}}}
+
+\begin{document}
+\pagenumbering{gobble}
+
+\begin{titlepage}
+  \color{ink}
+  \vspace*{1.3cm}
+  {\small UNIVERSIDAD DEL VALLE DE GUATEMALA\par}
+  \vspace{0.35cm}
+  {\color{petrol}\noindent\rule{\textwidth}{1.4pt}\par}
+  \vspace{1.6cm}
+  {\Huge\bfseries Text-to-SQL con QLoRA\par}
+  \vspace{0.35cm}
+  {\Large Fine-tuning de Qwen2.5-Coder para consultas MySQL en español\par}
+  \vspace{1.2cm}
+  \begin{tcolorbox}[colback=mist,colframe=line,boxrule=0.6pt,arc=2mm]
+    \textbf{Objetivo.} Generar una única consulta MySQL 8.4.10 correcta a partir de un esquema y una pregunta en español, comparando el modelo base con dos configuraciones QLoRA mediante exactitud por ejecución.
+  \end{tcolorbox}
+  \vfill
+  \begin{tabular}{@{}ll@{}}
+    \textbf{Wilson Alejandro Calderón Argueta} & 22018 \\
+    \textbf{Pablo Daniel Barillas Moreno} & 22193 \\
+  \end{tabular}
+  \vspace{0.8cm}
+
+  Deep Learning y Sistemas Inteligentes · Sección 30\\
+  2026
+\end{titlepage}
+
+\clearpage
+\pagenumbering{roman}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\section{Resumen}
+
+% Sustituir únicamente cuando existan resultados reproducibles.
+Este informe documenta el diseño del dataset, el baseline, dos configuraciones QLoRA que difieren solo en el rango, un experimento de inferencia guiado por ejecución y el análisis de errores. La exactitud final y la predicción de evaluación oculta se completarán a partir de los artefactos en \texttt{resultados/}.
+
+\begin{finding}{Resultado principal}
+  EX del baseline: \pending. EX del adapter seleccionado: \pending. Mejora absoluta: \pending.
+\end{finding}
+
+\section{Problema y restricciones}
+
+Describir el contrato de \texttt{generar\_sql}, MySQL 8.4.10, límites de tiempo, determinismo y evaluación por ejecución. Explicar por qué la interfaz web queda fuera de la ruta evaluada.
+
+\section{Datos}
+
+\subsection{Fuentes y licencias}
+Documentar Spider/BIRD, traducción, esquemas propios y condiciones de redistribución.
+
+\subsection{Conversión y validación}
+Reportar candidatos, aceptados y descartes por motivo. Toda cifra debe provenir de un manifiesto versionado.
+
+\subsection{Separación por esquema}
+Demostrar que no existe intersección entre entrenamiento y validación.
+
+\section{Metodología}
+
+\subsection{Baseline y prompt}
+Incluir el prompt final y explicar que permanece idéntico con y sin adapter.
+
+\subsection{Configuraciones QLoRA}
+
+\begin{table}[H]
+  \centering
+  \caption{Comparación controlada de configuraciones.}
+  \begin{tabularx}{\textwidth}{@{}lXXX@{}}
+    \toprule
+    Configuración & Rango & Factor constante & Hipótesis \\
+    \midrule
+    A & 16 & $\alpha=32$, dropout 0.05 & Menor costo y capacidad suficiente \\
+    B & 32 & $\alpha=32$, dropout 0.05 & Mayor capacidad en consultas complejas \\
+    \bottomrule
+  \end{tabularx}
+\end{table}
+
+\subsection{Experimento de inferencia}
+Comparar generación directa con una reparación ante error devuelto por MySQL.
+
+\section{Resultados}
+
+\subsection{Curvas y costo}
+Insertar curvas train/eval loss, parámetros entrenables, tiempo y memoria.
+
+\subsection{Exactitud por ejecución}
+Reportar EX total y por nivel, tasa de ejecución y latencia p50/p95.
+
+\section{Análisis de errores}
+Clasificar sintaxis, entidad inexistente, JOIN, agregación, filtro y resultado distinto. Incluir ejemplos representativos sin seleccionar solo casos favorables.
+
+\section{Predicción de evaluación oculta}
+Construir la estimación desde la validación inédita, un intervalo bootstrap y una penalización por cambio de dominio.
+
+\section{Conclusiones}
+Responder qué aportó el fine-tuning, qué configuración ganó, cuándo ayudó la reparación y cuál es la principal limitación.
+
+\section*{Uso de inteligencia artificial}
+OpenAI Codex apoyó la planificación, estructura documental y handoff de interfaz; v0 de Vercel podrá apoyar la implementación React. El equipo revisará y validará todo artefacto. Ninguna API externa participa en la generación SQL evaluada.
+
+\end{document}
