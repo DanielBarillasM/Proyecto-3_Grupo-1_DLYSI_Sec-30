@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="../web/public/icon.svg" type="image/svg+xml">
   <title>Text-to-SQL con QLoRA — Proyecto 3</title>
   <style>
     :root {
@@ -120,19 +121,19 @@
     <section class="slide">
       <h2>Dataset: calidad antes que volumen bruto</h2>
       <div class="flow">
-        <div><h3>Candidatos</h3><p>Spider, BIRD y 12 esquemas propios.</p></div>
-        <div><h3>Conversión</h3><p>MySQL y preguntas en español.</p></div>
+        <div><h3>Candidatos</h3><p>2,592 pares sobre 12 esquemas propios.</p></div>
+        <div><h3>Conversión</h3><p>Plantillas en español y dialecto MySQL.</p></div>
         <div><h3>Ejecución</h3><p>Validación en MySQL 8.4.10.</p></div>
-        <div><h3>Dataset</h3><p>Meta: 2,300+ pares válidos.</p></div>
+        <div><h3>Dataset</h3><p>2,592 aceptados; 0 descartes.</p></div>
       </div>
-      <p class="pending" style="margin-top:auto">Sustituir con conteos reales y descartes.</p>
+      <p style="margin-top:auto">Conteos trazables en un manifiesto con hashes SHA-256.</p>
       <span class="footer">04 / 12</span>
     </section>
 
     <section class="slide">
       <h2>Validación sin fuga de esquemas</h2>
       <div class="grid-2">
-        <div class="panel"><h3>Entrenamiento</h3><p>Esquemas públicos y propios, separados por <code>schema_id</code>.</p></div>
+        <div class="panel"><h3>Entrenamiento</h3><p>12 esquemas propios, separados por <code>schema_id</code>.</p></div>
         <div class="panel"><h3>Validación</h3><p>2 esquemas inéditos y 40 preguntas propias.</p></div>
       </div>
       <ul style="margin-top:32px"><li>14 fáciles, 14 medias, 12 difíciles.</li><li>Hash estructural para verificar cero intersecciones.</li></ul>
@@ -143,9 +144,9 @@
       <h2>Un baseline comparable</h2>
       <p>Qwen2.5-Coder-1.5B-Instruct sin adapter usa exactamente el mismo prompt, saneamiento y evaluador que los modelos ajustados.</p>
       <div class="grid-3" style="margin-top:26px">
-        <div class="panel"><h3>EX total</h3><div class="metric pending">—</div></div>
-        <div class="panel"><h3>SQL ejecutable</h3><div class="metric pending">—</div></div>
-        <div class="panel"><h3>Latencia p95</h3><div class="metric pending">—</div></div>
+        <div class="panel"><h3>EX total</h3><div class="metric pending">Pend.</div></div>
+        <div class="panel"><h3>SQL ejecutable</h3><div class="metric pending">Pend.</div></div>
+        <div class="panel"><h3>Latencia p95</h3><div class="metric pending">Pend.</div></div>
       </div>
       <span class="footer">06 / 12</span>
     </section>
@@ -166,7 +167,7 @@
     <section class="slide">
       <h2>Entrenamiento y selección</h2>
       <div class="grid-2">
-        <div class="panel"><h3>Curvas train/eval loss</h3><p class="pending">Insertar figura reproducible.</p></div>
+        <div class="panel"><h3>Espacio reservado</h3><p class="pending">Curvas generadas por las corridas T4.</p></div>
         <div><ul><li>Parámetros entrenables.</li><li>Tiempo y memoria pico.</li><li>EX por dificultad.</li><li>Selección por ejecución, no por loss.</li></ul></div>
       </div>
       <span class="footer">08 / 12</span>
@@ -191,7 +192,7 @@
         <div class="panel"><h3>Relaciones</h3><p>JOIN, agregación o filtro.</p></div>
         <div class="panel"><h3>Semántica</h3><p>Ejecuta, pero devuelve otro resultado.</p></div>
       </div>
-      <p class="pending" style="margin-top:auto">Insertar distribución y dos casos representativos.</p>
+      <p class="pending" style="margin-top:auto">Distribución y casos pendientes de evaluar el modelo.</p>
       <span class="footer">10 / 12</span>
     </section>
 
@@ -201,17 +202,17 @@
         <thead><tr><th>Modelo</th><th>EX</th><th>Δ baseline</th><th>Difícil</th></tr></thead>
         <tbody><tr><td>Baseline</td><td class="pending">—</td><td>—</td><td class="pending">—</td></tr><tr><td>QLoRA ganador</td><td class="pending">—</td><td class="pending">—</td><td class="pending">—</td></tr></tbody>
       </table>
-      <div class="panel" style="margin-top:34px"><h3>Predicción justificada</h3><p class="pending">Completar valor, intervalo y penalización por cambio de dominio.</p></div>
+      <div class="panel" style="margin-top:34px"><h3>Predicción justificada</h3><p class="pending">Se calculará tras medir EX, bootstrap y cambio de dominio.</p></div>
       <span class="footer">11 / 12</span>
     </section>
 
     <section class="slide">
       <h2>Conclusiones</h2>
       <ol>
-        <li class="pending">Qué aportó el fine-tuning.</li>
-        <li class="pending">Qué configuración fue más eficiente.</li>
-        <li class="pending">Cuándo ayudó la reparación.</li>
-        <li class="pending">Cuál es la limitación principal.</li>
+        <li>La infraestructura y 2,632 referencias SQL ya están verificadas.</li>
+        <li class="pending">Efecto del fine-tuning: pendiente de T4.</li>
+        <li class="pending">Rango ganador y reparación: pendientes de evaluación.</li>
+        <li>Riesgo principal: cambio de dominio hacia esquemas ocultos.</li>
       </ol>
       <div class="meta"><div>Adapter · prompt · dataset · evaluador reproducible</div><div>Gracias</div></div>
       <span class="footer">12 / 12</span>

@@ -33,8 +33,8 @@ La hipótesis registrada antes del entrenamiento será: **aumentar el rango de 1
 
 ### Datos
 
-- Objetivo de recolección: 2,500+ candidatos; objetivo final: 2,300+ válidos.
-- Fuentes: Spider/BIRD convertidos a MySQL y traducidos al español, más pares generados sobre 12 esquemas propios.
+- Resultado congelado: 2,592 candidatos y 2,592 pares válidos.
+- Fuente utilizada: generación sintética determinista sobre 12 esquemas propios, con plantillas auditables y licencia MIT. Spider y BIRD se excluyeron para evitar mezclar licencias y conversiones no verificadas.
 - Una unidad de ejemplo contendrá como mínimo: `schema_id`, DDL completo, pregunta en español, SQL MySQL, dificultad, fuente, estado de validación y motivo de descarte.
 - Todo par aceptado debe ejecutar sin error contra una instancia poblada de MySQL 8.4.10.
 - Se conservarán las licencias y la procedencia de cada fuente; los datos que no permitan redistribución se reconstruirán mediante scripts o se excluirán del repositorio.

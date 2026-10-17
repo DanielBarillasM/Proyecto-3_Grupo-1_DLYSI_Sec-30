@@ -1,0 +1,20 @@
+{
+  "status": "pending_training",
+  "dataset": {
+    "training_pairs": 2592,
+    "training_schemas": 12,
+    "validation_examples": 40,
+    "validation_schemas": 2,
+    "mysql_version": "8.4.10"
+  },
+  "experiments": {
+    "baseline": {"weighted_ex": null, "executable_rate": null, "latency_p95_ms": null},
+    "qlora_r16": {"weighted_ex": null, "trainable_parameters": null, "training_minutes": null},
+    "qlora_r32": {"weighted_ex": null, "trainable_parameters": null, "training_minutes": null},
+    "direct": {"weighted_ex": null},
+    "repair": {"weighted_ex": null}
+  },
+  "selected_adapter": null,
+  "hidden_ex_prediction": null,
+  "note": "No se publican métricas hasta ejecutar las corridas reales en GPU T4."
+}

@@ -2,203 +2,153 @@
 
 # Texto a SQL con QLoRA
 
-### Proyecto 3 - Deep Learning y Sistemas Inteligentes
+**Proyecto 3 · Deep Learning y Sistemas Inteligentes · Sección 30**
 
-**Universidad del Valle de Guatemala · Sección 30 · 2026**
-
-[![Estado](https://img.shields.io/badge/estado-planificaci%C3%B3n-0C5968?style=flat-square)](#estado-del-proyecto)
-[![Modelo](https://img.shields.io/badge/modelo-Qwen2.5--Coder--1.5B-C7643B?style=flat-square)](#decisiones-t%C3%A9cnicas)
-[![Motor](https://img.shields.io/badge/MySQL-8.4.10-4479A1?style=flat-square)](#restricciones-no-negociables)
-[![Licencia](https://img.shields.io/badge/licencia-MIT-14282B?style=flat-square)](LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.11%2B-146c64?style=flat-square)](requirements.txt)
+[![MySQL](https://img.shields.io/badge/MySQL-8.4.10-b34d2d?style=flat-square)](docker-compose.yml)
+[![Tests](https://img.shields.io/badge/tests-18%20passing-2f776d?style=flat-square)](tests)
+[![Estado](https://img.shields.io/badge/estado-listo%20para%20entrenar-d39b2a?style=flat-square)](#estado-verificable)
 
 **Wilson Alejandro Calderón Argueta · 22018**<br>
 **Pablo Daniel Barillas Moreno · 22193**
 
+Universidad del Valle de Guatemala · 2026
+
 </div>
 
----
+## Resultado actual
 
-## Qué estamos construyendo
+Este repositorio implementa el sistema completo de Text-to-SQL solicitado: preparación y auditoría de datos, validación real en MySQL 8.4.10, contrato de inferencia, seguridad de salida, baseline configurable, dos corridas QLoRA comparables, evaluación por ejecución, API FastAPI, interfaz React, informe LaTeX y presentación HTML. Solo falta ejecutar las corridas que necesitan GPU T4, elegir el adapter ganador y copiarlo a `adapter/`.
 
-Un sistema reproducible de **Text-to-SQL en español** que recibe el esquema de una base de datos y una pregunta, y genera una única consulta compatible con MySQL 8.4.10. El núcleo del proyecto es el fine-tuning de `Qwen/Qwen2.5-Coder-1.5B-Instruct` mediante QLoRA; el resultado se evaluará por exactitud de ejecución sobre bases y preguntas ocultas.
+No se publican métricas ficticias. Los campos que dependen del entrenamiento permanecen en `null` o marcados como **Pendiente**.
 
-La aplicación React es una capa de demostración y análisis. No sustituye ni modifica el contrato oficial de `solucion.py`, y no usa servicios externos para generar SQL.
+## Estado verificable
 
-> **Entrega:** domingo 25 de octubre de 2026, 23:59 (America/Guatemala).<br>
-> **Formato oficial:** repositorio privado en GitHub; en Canvas, repositorio comprimido y PDF de la presentación.
-
-## Navegación
-
-| Documento | Propósito |
-|---|---|
-| [Plan de ejecución](docs/PLAN_PROYECTO.md) | Decisiones, fases, calendario, métricas, riesgos y definición de terminado |
-| [Handoff para v0](docs/HANDOFF_V0.md) | Contexto completo y prompt listo para generar la aplicación React |
-| [Enunciado original](docs/enunciado/Proyecto_3_Texto_a_SQL.pdf) | Fuente autoritativa de requisitos del curso |
-| [Informe LaTeX](informe/main.tex) | Esqueleto estético del informe técnico |
-| [Presentación HTML](presentacion/index.html) | Fuente imprimible de la presentación de hasta 12 diapositivas |
-| [Bitácora](BITACORA.md) | Registro cronológico de trabajo; requiere al menos 8 entradas reales |
-| [Contribuciones](CONTRIBUCIONES.md) | Responsables y evidencia verificable |
-
-## Decisiones técnicas
-
-| Área | Decisión inicial | Razón |
+| Componente | Estado | Evidencia |
 |---|---|---|
-| Modelo base | `Qwen/Qwen2.5-Coder-1.5B-Instruct` | Es la opción recomendada por el enunciado y cabe en una T4 con cuantización |
-| Ajuste | QLoRA de 4 bits, NF4, cómputo FP16 | Reduce memoria y es compatible con GPU T4 |
-| Comparación LoRA | A: rango 16; B: rango 32 | Cambia un solo factor: `r`; todo lo demás permanece fijo |
-| Motor SQL | `mysql:8.4.10` | Reproduce el entorno oficial, incluido `ONLY_FULL_GROUP_BY` |
-| Métrica principal | Exactitud ponderada por ejecución (EX) | Es la métrica de evaluación oculta |
-| Experimento de inferencia | Una reparación guiada por `ejecutar` | Aprovecha el contrato oficial sin exceder tres ejecuciones |
-| UI | Next.js + React + TypeScript dentro de `web/` | Es la ruta más fiable para v0 y mantiene aislada la entrega Python |
-| Visualización | shadcn/ui, Tailwind CSS, Lucide y Recharts | Componentes editables, accesibles y sin dependencia de una API externa |
-| Editor SQL | CodeMirror cargado de forma diferida | Resaltado SQL sin incluir un IDE pesado en el bundle inicial |
+| Dataset de entrenamiento | 2,592 pares aceptados, 12 esquemas | `datos/entrenamiento/aceptados.jsonl` |
+| Validación propia | 40 casos, 2 esquemas inéditos | `datos/validacion/preguntas.jsonl` |
+| Ejecución SQL | 2,632/2,632 referencias válidas, 0 descartes | `resultados/dataset_manifest.json` |
+| Motor | MySQL 8.4.10 + `ONLY_FULL_GROUP_BY` | manifiesto versionado |
+| Contrato y API | Implementados | `solucion.py`, `backend/` |
+| Pruebas locales | 18 aprobadas | `tests/` |
+| Web | 4 rutas, build de producción válido | `web/` |
+| Entrenamiento QLoRA | Preparado; requiere T4 | `scripts/train_qlora.py` |
+| Adapter final | Pendiente de las corridas | `adapter/` |
+| Revisión humana de 100 filas | Pendiente del equipo | `datos/revision_muestra.csv` |
 
-## Restricciones no negociables
-
-- El valor devuelto por `generar_sql(esquema, pregunta, ejecutar=None)` será **una sola** consulta `SELECT` o `WITH ... SELECT`.
-- El modelo se cargará desde `config.json`; `usar_adapter: false` deberá ejecutar el mismo prompt sin adapter.
-- La generación será determinista (`do_sample=False` y semilla `2026`).
-- Tiempo máximo: 5 minutos de carga y 30 segundos por pregunta.
-- No se utilizarán APIs externas durante la generación evaluada.
-- Solo se aceptarán pares de entrenamiento cuya consulta ejecute sin error en MySQL 8.4.10.
-- Entrenamiento y validación se separarán por esquema, nunca por pregunta.
-- Los esquemas de validación no aparecerán en entrenamiento.
-- La salida se validará como lectura; se rechazarán DDL, DML y múltiples sentencias.
-- La app web será opcional y no se importará desde `solucion.py`.
-
-## Arquitectura prevista
-
-```mermaid
-flowchart LR
-    A[Datos públicos y propios] --> B[Conversión a MySQL]
-    B --> C[Validación de ejecución]
-    C --> D[Dataset >= 2,000 pares]
-    D --> E[QLoRA A: r=16]
-    D --> F[QLoRA B: r=32]
-    E --> G[Evaluador por ejecución]
-    F --> G
-    H[Baseline sin adapter] --> G
-    G --> I[Resultados CSV/JSON]
-    I --> J[Informe LaTeX]
-    I --> K[Presentación HTML]
-    I --> L[Aplicación React]
-    M[solucion.py] --> N[Evaluación oculta]
-    E --> M
-    F --> M
-```
-
-La frontera importante es `solucion.py`: ni la aplicación React ni su backend opcional forman parte de la ruta que utilizará el docente.
-
-## Estructura del repositorio
+## Arquitectura
 
 ```text
-.
-├── adapter/                    # Adapter QLoRA final y metadatos
-├── backend/                    # API local opcional para la demo React
-├── datos/
-│   ├── entrenamiento/         # Pares aceptados, separados por esquema
-│   ├── validacion/            # 2+ esquemas inéditos y 40 preguntas propias
-│   ├── descartes/             # Pares rechazados y motivo auditable
-│   └── esquemas/              # DDL, semillas y metadatos de esquemas
-├── docs/
-│   ├── enunciado/             # PDF original del proyecto
-│   ├── HANDOFF_V0.md
-│   └── PLAN_PROYECTO.md
-├── informe/
-│   └── main.tex               # Fuente del informe
-├── notebooks/                 # Datos, entrenamiento y evaluación
-├── presentacion/
-│   └── index.html             # Fuente; se exportará a presentacion.pdf
-├── resultados/                # Métricas, curvas y validacion_propia.csv
-├── scripts/                   # Automatización reproducible
-├── tests/                     # Contrato, seguridad SQL y evaluación
-├── web/                       # Aplicación Next.js/React generada con v0
-├── BITACORA.md
-├── CONTRIBUCIONES.md
-├── config.json
-├── solucion.py                # Se implementará en la fase de inferencia
-└── requirements.txt           # Se fijará tras validar en Colab T4
+datos + DDL/semillas ──> validación MySQL ──> dataset aceptado
+                                                  │
+                                ┌─────────────────┴─────────────────┐
+                                v                                   v
+                         QLoRA r=16                           QLoRA r=32
+                                └────────> evaluación EX <──────────┘
+                                               │
+                                               v
+                                     adapter/ + solucion.py
+                                               │
+                           ┌───────────────────┴───────────────────┐
+                           v                                       v
+                    evaluación oculta                        API + React
 ```
 
-Los archivos todavía no implementados aparecen en el árbol porque son entregables obligatorios, no porque ya estén completos.
+La ruta oficial no depende de la interfaz: el docente importa únicamente `generar_sql` desde `solucion.py`.
 
-## Flujo experimental
+## Instalación local ligera
 
-1. Reunir y normalizar más de 2,500 candidatos para conservar al menos 2,000 pares válidos.
-2. Convertir todo SQL al dialecto MySQL y ejecutarlo en MySQL 8.4.10.
-3. Deduplicar por esquema, pregunta normalizada y SQL normalizado.
-4. Congelar dos esquemas de validación antes de entrenar y escribir 40 preguntas propias balanceadas.
-5. Medir el baseline con exactamente el mismo prompt de inferencia.
-6. Entrenar QLoRA A (`r=16`) y QLoRA B (`r=32`) con la misma semilla y demás hiperparámetros.
-7. Seleccionar el adapter por EX ponderada, no por loss de entrenamiento.
-8. Comparar inferencia directa contra una reparación guiada por ejecución.
-9. Clasificar errores en sintaxis, entidad inexistente, JOIN, agregación, filtro y resultado distinto.
-10. Repetir la instalación y evaluación desde cero en Google Colab con GPU T4.
+```powershell
+uv venv --python 3.13
+uv pip install --python .venv\Scripts\python.exe fastapi pydantic mysql-connector-python sqlglot pytest pytest-asyncio httpx nbformat pypdf uvicorn
+docker compose up -d mysql
+.\.venv\Scripts\python.exe scripts\validate_mysql.py
+.\.venv\Scripts\python.exe -m pytest -q
+```
 
-Los criterios cuantitativos y el calendario diario están en el [plan de ejecución](docs/PLAN_PROYECTO.md).
-
-## Ejecución
-
-Los comandos definitivos se documentarán cuando cada ruta haya sido probada desde un entorno limpio. El objetivo de la interfaz será:
+Para instalar el runtime completo del modelo en Colab/T4:
 
 ```bash
-# Entorno evaluable
-pip install -r requirements.txt
-python -m pytest
+pip install -r requirements-dev.txt
+```
 
-# Aplicación React opcional
+## Los tres notebooks
+
+1. `notebooks/01_datos.ipynb`: regenera los datos, valida en MySQL y verifica volumen, dificultad y separación.
+2. `notebooks/02_entrenamiento.ipynb`: documenta la hipótesis, verifica T4 y reserva el único paso pendiente: dos entrenamientos.
+3. `notebooks/03_evaluacion.ipynb`: ejecuta baseline/adapters, compara EX ponderada y prueba una reparación.
+
+## Entrenamiento pendiente en T4
+
+Ejecuta primero smoke tests:
+
+```bash
+python scripts/train_qlora.py --config configuraciones/qlora_r16.json --output resultados/adapters/qlora_r16 --smoke
+python scripts/train_qlora.py --config configuraciones/qlora_r32.json --output resultados/adapters/qlora_r32 --smoke
+```
+
+Luego quita `--smoke` para las corridas reales. Ambas configuraciones conservan modelo, datos, semilla, alpha, dropout y épocas; solo cambia `r` (16 frente a 32).
+
+## Evaluación y selección
+
+```bash
+python scripts/run_validation.py --name baseline
+python scripts/run_validation.py --name qlora_r16 --adapter resultados/adapters/qlora_r16
+python scripts/run_validation.py --name qlora_r32 --adapter resultados/adapters/qlora_r32
+python scripts/run_validation.py --name ganador_repair --adapter resultados/adapters/qlora_rXX --repair
+python scripts/select_adapter.py resultados/adapters/qlora_rXX
+```
+
+Después de seleccionar, cambia `usar_adapter` a `true` en `config.json`, actualiza `resultados/resumen.json`, el informe y la presentación. El evaluador permite como máximo una generación y una reparación; queda por debajo del límite de tres llamadas a `ejecutar`.
+
+## API y aplicación React
+
+```powershell
+.\.venv\Scripts\uvicorn.exe backend.main:app --reload
 cd web
+Copy-Item .env.example .env.local
 pnpm install --frozen-lockfile
 pnpm dev
 ```
 
-No se publicarán comandos provisionales que aparenten reproducibilidad antes de haberlos validado en T4 y MySQL 8.4.10.
+Sin `NEXT_PUBLIC_API_URL`, la interfaz usa un fixture local claramente etiquetado. Con la API y `TEXT_TO_SQL_MODE=model`, usa el runtime local. Consulta [web/README.md](web/README.md).
 
-## Evaluación y metas internas
+## Estructura relevante
 
-| Indicador | Mínimo del enunciado | Meta interna |
-|---|---:|---:|
-| Pares válidos de entrenamiento | 2,000 | 2,300+ después de filtros |
-| Esquemas propios para datos generados | 10 | 12 |
-| Esquemas inéditos de validación | 2 | 2, completamente congelados |
-| Preguntas propias de validación | 40 | 40: 14 fáciles, 14 medias, 12 difíciles |
-| EX con adapter | Sin mínimo obligatorio | >= 0.70 |
-| Mejora frente al baseline | Sin mínimo obligatorio | >= 0.15 |
-| Consultas no deterministas o mutables | 0 | 0 |
-
-## Colaboración
-
-- **Wilson Alejandro Calderón Argueta:** propietario de datos y validación SQL; evidencia en scripts, descartes y commits.
-- **Pablo Daniel Barillas Moreno:** propietario de entrenamiento e integración de inferencia; evidencia en notebooks, adapters y commits.
-- **Ambos:** validación propia, análisis de errores, revisión cruzada, informe y presentación.
-
-Cada integrante debe hacer commits desde su propia cuenta. No se atribuirán a una persona cambios hechos por otra ni por una herramienta automática. Antes de entregar se generará:
-
-```bash
-git log --all --date=iso --stat > historial_git.txt
+```text
+adapter/          destino del adapter ganador
+backend/          API FastAPI opcional
+configuraciones/  QLoRA r=16 y r=32
+datos/            esquemas, semillas, dataset, descartes y revisión
+informe/          fuente LaTeX
+notebooks/        flujo reproducible en tres etapas
+presentacion/     presentación HTML imprimible
+resultados/       manifiesto, CSV y salidas de corridas
+scripts/          generación, validación, entrenamiento y auditoría
+tests/            contrato, seguridad, evaluación, API y datos
+text2sql/         runtime, prompt, seguridad y métricas
+web/              Next.js 16 + React 19
 ```
 
-## Licencias y uso de IA
+## Auditoría de entrega
 
-El código propio se distribuye bajo [MIT](LICENSE). Las dependencias se registrarán con nombre, versión y licencia antes de la entrega. La propuesta web usa proyectos permisivos: React y Next.js (MIT), Tailwind CSS (MIT), shadcn/ui (MIT), Recharts (MIT), CodeMirror (MIT) y Lucide (ISC).
+```powershell
+.\.venv\Scripts\python.exe scripts\audit_delivery.py
+```
 
-Se utilizó **OpenAI Codex** para analizar el enunciado, proponer el plan, crear la estructura documental y preparar el handoff de UI. Se prevé utilizar **v0 de Vercel** para generar y refinar la aplicación React. Todo código, dato sintético y texto generado por IA deberá ser revisado, ejecutado y validado por el equipo. No se usará ninguna API de IA en la ruta de inferencia evaluada.
+La auditoría trata el adapter y la revisión humana como pendientes explícitos. Antes de entregar también deben completarse `BITACORA.md`, `CONTRIBUCIONES.md` y `historial_git.txt` con evidencia auténtica de ambos integrantes.
 
-## Estado del proyecto
+## Documentos
 
-- [x] Enunciado leído, extraído y revisado visualmente.
-- [x] Decisiones técnicas iniciales y plan de riesgos.
-- [x] Estructura del repositorio y handoff para v0.
-- [x] Esqueletos de informe y presentación.
-- [ ] Dataset validado en MySQL 8.4.10.
-- [ ] Baseline reproducible.
-- [ ] Dos configuraciones QLoRA entrenadas.
-- [ ] Experimento de inferencia y análisis de errores.
-- [ ] Validación limpia en Colab T4.
-- [ ] Adapter, PDF final y paquete de entrega.
+- [Plan de ejecución](docs/PLAN_PROYECTO.md)
+- [Handoff de interfaz](docs/HANDOFF_V0.md)
+- [Enunciado original](docs/enunciado/Proyecto_3_Texto_a_SQL.pdf)
+- [Fuentes y licencias de datos](datos/FUENTES_Y_LICENCIAS.md)
+- [Informe LaTeX](informe/main.tex) y [PDF compilado](output/pdf/informe.pdf)
+- [Presentación HTML](presentacion/index.html)
+- [Presentación PDF](presentacion.pdf)
 
----
+## IA, licencias y honestidad académica
 
-<div align="center">
-Trabajo académico de la Universidad del Valle de Guatemala · Deep Learning y Sistemas Inteligentes · Sección 30
-</div>
+OpenAI Codex ayudó a estructurar, implementar y verificar artefactos; la interfaz inicial provino de v0 y fue revisada y reemplazada donde contenía datos simulados confusos. No se usa ninguna API externa durante la generación evaluada. El código propio se publica bajo MIT; las fuentes sintéticas y dependencias están identificadas. Los integrantes deben revisar el código, completar el control humano y poder explicar todas las decisiones.

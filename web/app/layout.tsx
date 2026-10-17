@@ -1,46 +1,10 @@
-import { Analytics } from '@vercel/analytics/next'
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'Text-to-SQL · Laboratorio de investigación',
-  description: 'Entorno interactivo para evaluar la traducción de lenguaje natural a SQL.',
-  generator: 'v0.app',
-  icons: {
-    icon: [
-      {
-        url: '/icon-light-32x32.png',
-        media: '(prefers-color-scheme: light)',
-      },
-      {
-        url: '/icon-dark-32x32.png',
-        media: '(prefers-color-scheme: dark)',
-      },
-      {
-        url: '/icon.svg',
-        type: 'image/svg+xml',
-      },
-    ],
-    apple: '/apple-icon.png',
-  },
+  title: { default: 'Text-to-SQL · Grupo 1', template: '%s · Text-to-SQL' },
+  description: 'Laboratorio reproducible para traducir preguntas en español a SQL de MySQL.',
+  icons: { icon: '/icon.svg' },
 }
-
-export const viewport: Viewport = {
-  colorScheme: 'light',
-  themeColor: '#f4f1eb',
-}
-
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode
-}>) {
-  return (
-    <html lang="es">
-      <body className="antialiased">
-        {children}
-        {process.env.NODE_ENV === 'production' && <Analytics />}
-      </body>
-    </html>
-  )
-}
+export const viewport: Viewport = { colorScheme: 'light', themeColor: '#f3f0e8' }
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="es" data-scroll-behavior="smooth"><body>{children}</body></html> }

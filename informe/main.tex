@@ -1,154 +1,70 @@
-\documentclass[11pt,letterpaper]{article}
-
+\documentclass[10pt,letterpaper]{article}
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage[spanish,es-nodecimaldot]{babel}
-\usepackage{lmodern}
-\usepackage[letterpaper,margin=2.35cm,headheight=22pt]{geometry}
-\usepackage{xcolor}
-\usepackage{graphicx}
-\usepackage{booktabs}
-\usepackage{tabularx}
-\usepackage{array}
-\usepackage{float}
-\usepackage{tcolorbox}
-\usepackage{fancyhdr}
-\usepackage{hyperref}
-
-\definecolor{ink}{HTML}{14282B}
-\definecolor{petrol}{HTML}{0C5968}
-\definecolor{copper}{HTML}{C7643B}
-\definecolor{mist}{HTML}{F3F7F7}
-\definecolor{line}{HTML}{CCD9D9}
-\definecolor{muted}{HTML}{587074}
-
-\hypersetup{
-  colorlinks=true,
-  linkcolor=petrol,
-  citecolor=petrol,
-  urlcolor=copper,
-  pdftitle={Text-to-SQL con QLoRA},
-  pdfauthor={Wilson Alejandro Calderón Argueta y Pablo Daniel Barillas Moreno}
-}
-
-\pagestyle{fancy}
-\fancyhf{}
-\lhead{\small\color{muted}Deep Learning y Sistemas Inteligentes}
-\rhead{\small\color{muted}Proyecto 3}
-\cfoot{\small\color{muted}\thepage}
-\renewcommand{\headrulewidth}{0.4pt}
-\renewcommand{\headrule}{\hbox to\headwidth{\color{line}\leaders\hrule height \headrulewidth\hfill}}
-
-\newtcolorbox{finding}[1]{
-  colback=mist,
-  colframe=petrol,
-  boxrule=0.6pt,
-  arc=2mm,
-  title=\textbf{#1},
-  coltitle=ink
-}
-
-\newcommand{\pending}{\textcolor{copper}{\textbf{Pendiente de medición}}}
-
+\usepackage{lmodern,booktabs,tabularx,array,float}
+\usepackage[letterpaper,margin=2.15cm,headheight=18pt]{geometry}
+\usepackage{xcolor,tcolorbox,fancyhdr,hyperref}
+\definecolor{ink}{HTML}{173532}\definecolor{teal}{HTML}{146C64}\definecolor{rust}{HTML}{B34D2D}\definecolor{paper}{HTML}{F3F0E8}\definecolor{line}{HTML}{D9D7CD}
+\hypersetup{colorlinks=true,linkcolor=teal,urlcolor=rust,pdftitle={Text-to-SQL con QLoRA},pdfauthor={Wilson Calderón y Pablo Barillas}}
+\pagestyle{fancy}\fancyhf{}\lhead{\small\color{teal}Text-to-SQL con QLoRA}\rhead{\small\color{teal}Proyecto 3}\cfoot{\thepage}\renewcommand{\headrulewidth}{.4pt}
+\newtcolorbox{resultado}[1]{colback=paper,colframe=teal,boxrule=.7pt,arc=1mm,title=\textbf{#1},coltitle=ink}
+\newcommand{\pendiente}{\textcolor{rust}{\textbf{Pendiente de la corrida T4}}}
+\newcommand{\code}[1]{\texttt{#1}}
 \begin{document}
-\pagenumbering{gobble}
+\begin{titlepage}\color{ink}\vspace*{1cm}
+{\small UNIVERSIDAD DEL VALLE DE GUATEMALA \hfill SECCIÓN 30\par}\vspace{.25cm}{\color{teal}\rule{\textwidth}{2pt}}\vspace{1.5cm}
+{\Huge\bfseries Text-to-SQL con QLoRA\par}\vspace{.35cm}{\Large Traducción reproducible de preguntas en español a MySQL\par}\vspace{1.2cm}
+\begin{resultado}{Objetivo}Ajustar Qwen2.5-Coder-1.5B-Instruct mediante QLoRA y medir exactitud de ejecución sobre esquemas inéditos, conservando una ruta de inferencia local, determinista y auditable.\end{resultado}
+\vfill
+\begin{tabular}{@{}ll@{}}\textbf{Wilson Alejandro Calderón Argueta}&22018\\\textbf{Pablo Daniel Barillas Moreno}&22193\end{tabular}\vspace{.8cm}
 
-\begin{titlepage}
-  \color{ink}
-  \vspace*{1.3cm}
-  {\small UNIVERSIDAD DEL VALLE DE GUATEMALA\par}
-  \vspace{0.35cm}
-  {\color{petrol}\noindent\rule{\textwidth}{1.4pt}\par}
-  \vspace{1.6cm}
-  {\Huge\bfseries Text-to-SQL con QLoRA\par}
-  \vspace{0.35cm}
-  {\Large Fine-tuning de Qwen2.5-Coder para consultas MySQL en español\par}
-  \vspace{1.2cm}
-  \begin{tcolorbox}[colback=mist,colframe=line,boxrule=0.6pt,arc=2mm]
-    \textbf{Objetivo.} Generar una única consulta MySQL 8.4.10 correcta a partir de un esquema y una pregunta en español, comparando el modelo base con dos configuraciones QLoRA mediante exactitud por ejecución.
-  \end{tcolorbox}
-  \vfill
-  \begin{tabular}{@{}ll@{}}
-    \textbf{Wilson Alejandro Calderón Argueta} & 22018 \\
-    \textbf{Pablo Daniel Barillas Moreno} & 22193 \\
-  \end{tabular}
-  \vspace{0.8cm}
-
-  Deep Learning y Sistemas Inteligentes · Sección 30\\
-  2026
+Deep Learning y Sistemas Inteligentes\\2026
 \end{titlepage}
-
-\clearpage
-\pagenumbering{roman}
-\tableofcontents
-\clearpage
-\pagenumbering{arabic}
+\tableofcontents\clearpage
 
 \section{Resumen}
+Se construyó una canalización completa para generar SQL de lectura a partir de un esquema y una pregunta en español. La base experimental contiene 2,592 pares aceptados sobre 12 esquemas de entrenamiento y 40 preguntas sobre dos esquemas inéditos. Todas las consultas de referencia se ejecutaron sin error en MySQL 8.4.10 con \code{ONLY\_FULL\_GROUP\_BY}. El repositorio implementa dos configuraciones QLoRA que difieren únicamente en el rango, evaluación por ejecución y una reparación opcional. Al momento de congelar este borrador, las corridas en GPU T4 aún no se habían realizado; por integridad académica, sus métricas se reservan explícitamente.
+\begin{resultado}{Resultado principal}Baseline: \pendiente. QLoRA $r=16$: \pendiente. QLoRA $r=32$: \pendiente.\end{resultado}
 
-% Sustituir únicamente cuando existan resultados reproducibles.
-Este informe documenta el diseño del dataset, el baseline, dos configuraciones QLoRA que difieren solo en el rango, un experimento de inferencia guiado por ejecución y el análisis de errores. La exactitud final y la predicción de evaluación oculta se completarán a partir de los artefactos en \texttt{resultados/}.
+\section{Problema y contrato}
+La función oficial \code{generar\_sql(esquema, pregunta, ejecutar=None)} devuelve una sola sentencia \code{SELECT} o \code{WITH ... SELECT}. No emplea APIs externas, no ejecuta operaciones mutables y usa generación determinista. \code{config.json} permite activar o desactivar el adapter sin cambiar el prompt. El callback \code{ejecutar} se usa como máximo dos veces: una prueba inicial y, solo si falla, una reparación guiada por el mensaje del motor.
 
-\begin{finding}{Resultado principal}
-  EX del baseline: \pending. EX del adapter seleccionado: \pending. Mejora absoluta: \pending.
-\end{finding}
-
-\section{Problema y restricciones}
-
-Describir el contrato de \texttt{generar\_sql}, MySQL 8.4.10, límites de tiempo, determinismo y evaluación por ejecución. Explicar por qué la interfaz web queda fuera de la ruta evaluada.
+La aplicación React y la API FastAPI son una capa de demostración y no forman parte de la ruta evaluada. La salida pasa por una guardia basada en análisis sintáctico que rechaza sentencias múltiples, DDL y DML.
 
 \section{Datos}
+\subsection{Construcción y procedencia}
+Se diseñaron 14 esquemas relacionales sintéticos y revisables, cada uno con cinco tablas, claves foráneas, índices y datos semilla. Doce dominios se asignaron a entrenamiento; \emph{aerolínea} y \emph{eventos} se congelaron para validación. Las plantillas cubren filtros, orden, agregaciones, agrupación, \code{JOIN}, subconsultas y ventanas. La semilla global es 2026 y cada fila registra fuente, licencia, dificultad y esquema.
 
-\subsection{Fuentes y licencias}
-Documentar Spider/BIRD, traducción, esquemas propios y condiciones de redistribución.
+\begin{table}[H]\centering\caption{Manifiesto validado del dataset.}
+\begin{tabular}{@{}lrrl@{}}\toprule Partición&Esquemas&Ejemplos&Estado\\\midrule Entrenamiento&12&2,592&Aceptados en MySQL\\Validación propia&2&40&Congelados y ejecutables\\Descartes&--&0&Archivo auditable\\\bottomrule\end{tabular}\end{table}
 
-\subsection{Conversión y validación}
-Reportar candidatos, aceptados y descartes por motivo. Toda cifra debe provenir de un manifiesto versionado.
+La validación propia contiene 14 preguntas fáciles, 14 medias y 12 difíciles. La separación se verifica por \code{schema\_id}; no hay intersección entre particiones. Los hashes SHA-256 y la versión exacta del motor se conservan en \code{resultados/dataset\_manifest.json}. La revisión cruzada de 100 filas queda reservada para los integrantes en \code{datos/revision\_muestra.csv}.
 
-\subsection{Separación por esquema}
-Demostrar que no existe intersección entre entrenamiento y validación.
+\section{Metodología experimental}
+\subsection{Modelo, cuantización y prompt}
+Se usa \code{Qwen/Qwen2.5-Coder-1.5B-Instruct} en cuantización NF4 de 4 bits, cómputo FP16 y checkpointing de gradientes. El prompt incluye el dialecto, el esquema, la pregunta y la restricción de emitir únicamente SQL. El mismo texto se usa para baseline y adapters.
 
-\section{Metodología}
+\subsection{Comparación controlada}
+\begin{table}[H]\centering\caption{Única variable experimental.}
+\begin{tabularx}{\textwidth}{@{}lccXX@{}}\toprule Corrida&$r$&$\alpha$&Constantes&Hipótesis\\\midrule A&16&32&dropout .05, semilla 2026, datos y épocas&Menor costo, capacidad suficiente\\B&32&32&dropout .05, semilla 2026, datos y épocas&Mayor capacidad para composición compleja\\\bottomrule\end{tabularx}\end{table}
+El entrenamiento separa desarrollo por esquema, guarda métricas y tokenizer junto con cada adapter y exige un smoke test antes de la corrida completa. La selección final no usa loss: gana la mayor exactitud de ejecución ponderada.
 
-\subsection{Baseline y prompt}
-Incluir el prompt final y explicar que permanece idéntico con y sin adapter.
-
-\subsection{Configuraciones QLoRA}
-
-\begin{table}[H]
-  \centering
-  \caption{Comparación controlada de configuraciones.}
-  \begin{tabularx}{\textwidth}{@{}lXXX@{}}
-    \toprule
-    Configuración & Rango & Factor constante & Hipótesis \\
-    \midrule
-    A & 16 & $\alpha=32$, dropout 0.05 & Menor costo y capacidad suficiente \\
-    B & 32 & $\alpha=32$, dropout 0.05 & Mayor capacidad en consultas complejas \\
-    \bottomrule
-  \end{tabularx}
-\end{table}
-
-\subsection{Experimento de inferencia}
-Comparar generación directa con una reparación ante error devuelto por MySQL.
+\subsection{Métrica y experimento de reparación}
+La exactitud por ejecución (EX) compara resultados normalizados: redondeo numérico a dos decimales, columnas adicionales permitidas y orden exigido solo cuando el caso lo indica. Los pesos son 1, 2 y 3 para dificultad fácil, media y difícil. Para el adapter ganador se comparará generación directa contra una única reparación tras un error de MySQL.
 
 \section{Resultados}
+\begin{table}[H]\centering\caption{Tabla preparada para resultados reproducibles.}
+\begin{tabular}{@{}lccc@{}}\toprule Variante&EX ponderada&Tasa ejecutable&Latencia p95\\\midrule Baseline&\pendiente&\pendiente&\pendiente\\QLoRA $r=16$&\pendiente&\pendiente&\pendiente\\QLoRA $r=32$&\pendiente&\pendiente&\pendiente\\Ganador + reparación&\pendiente&\pendiente&\pendiente\\\bottomrule\end{tabular}\end{table}
 
-\subsection{Curvas y costo}
-Insertar curvas train/eval loss, parámetros entrenables, tiempo y memoria.
+Las curvas de pérdida, parámetros entrenables, minutos de entrenamiento, memoria pico y EX por dificultad se insertarán desde los JSON y CSV generados por los scripts. Se conservarán resultados negativos y todos los fallos se clasificarán como sintaxis, entidad inexistente, \code{JOIN}, agregación, filtro o resultado distinto.
 
-\subsection{Exactitud por ejecución}
-Reportar EX total y por nivel, tasa de ejecución y latencia p50/p95.
-
-\section{Análisis de errores}
-Clasificar sintaxis, entidad inexistente, JOIN, agregación, filtro y resultado distinto. Incluir ejemplos representativos sin seleccionar solo casos favorables.
-
-\section{Predicción de evaluación oculta}
-Construir la estimación desde la validación inédita, un intervalo bootstrap y una penalización por cambio de dominio.
+\section{Reproducibilidad y riesgos}
+El entorno SQL se fija mediante Docker en MySQL 8.4.10. Los tres notebooks recorren datos, entrenamiento y evaluación en orden. Diecisiete pruebas locales cubren configuración, seguridad SQL, normalización de resultados, contrato oficial, API y dataset. El principal riesgo restante es el cambio de dominio entre esquemas sintéticos y evaluación oculta; se mitigará reportando EX por dificultad y una predicción conservadora, nunca sustituyendo datos faltantes por estimaciones presentadas como mediciones.
 
 \section{Conclusiones}
-Responder qué aportó el fine-tuning, qué configuración ganó, cuándo ayudó la reparación y cuál es la principal limitación.
+La infraestructura, los datos y la evaluación están listos y verificados. El proyecto separa con claridad lo medido de lo todavía pendiente. Las conclusiones sobre el efecto del fine-tuning, el rango ganador y la utilidad de la reparación solo podrán escribirse después de las corridas T4. Esta decisión mantiene trazabilidad y evita sobreinterpretar resultados inexistentes.
 
 \section*{Uso de inteligencia artificial}
-OpenAI Codex apoyó la planificación, estructura documental y handoff de interfaz; v0 de Vercel podrá apoyar la implementación React. El equipo revisará y validará todo artefacto. Ninguna API externa participa en la generación SQL evaluada.
-
+OpenAI Codex apoyó el análisis del enunciado, la implementación, la estructura documental y la revisión técnica; v0 se utilizó como punto de partida visual. Los integrantes deben revisar los artefactos, completar la revisión humana y ser capaces de explicar el código. Ninguna API externa participa en la generación SQL evaluada.
 \end{document}

@@ -1,5 +1,7 @@
 # Handoff completo para v0
 
+> **Estado:** brief histórico de la primera versión. La implementación final está en `web/`; se omitieron gráficas y CodeMirror hasta disponer de métricas reales, evitando dependencias sin una función verificable.
+
 ## Cómo usar este documento
 
 1. En v0, importar el repositorio privado `DanielBarillasM/Proyecto-3_Grupo-1_DLYSI_Sec-30`.
