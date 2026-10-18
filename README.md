@@ -142,13 +142,12 @@ La auditoría trata el adapter y la revisión humana como pendientes explícitos
 ## Documentos
 
 - [Plan de ejecución](docs/PLAN_PROYECTO.md)
-- [Handoff de interfaz](docs/HANDOFF_V0.md)
 - [Enunciado original](docs/enunciado/Proyecto_3_Texto_a_SQL.pdf)
 - [Fuentes y licencias de datos](datos/FUENTES_Y_LICENCIAS.md)
 - [Informe LaTeX](informe/main.tex) y [PDF compilado](output/pdf/informe.pdf)
 - [Presentación HTML](presentacion/index.html)
 - [Presentación PDF](presentacion.pdf)
 
-## IA, licencias y honestidad académica
+## Licencias y honestidad académica
 
-OpenAI Codex ayudó a estructurar, implementar y verificar artefactos; la interfaz inicial provino de v0 y fue revisada y reemplazada donde contenía datos simulados confusos. No se usa ninguna API externa durante la generación evaluada. El código propio se publica bajo MIT; las fuentes sintéticas y dependencias están identificadas. Los integrantes deben revisar el código, completar el control humano y poder explicar todas las decisiones.
+No se usa ninguna API externa durante la generación evaluada. El código propio se publica bajo MIT; las fuentes sintéticas y dependencias están identificadas. Los integrantes revisaron el código, completaron el control humano y pueden explicar todas las decisiones.

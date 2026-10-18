@@ -6,5 +6,9 @@ export const metadata: Metadata = {
   description: 'Laboratorio reproducible para traducir preguntas en español a SQL de MySQL.',
   icons: { icon: '/icon.svg' },
 }
-export const viewport: Viewport = { colorScheme: 'light', themeColor: '#f3f0e8' }
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) { return <html lang="es" data-scroll-behavior="smooth"><body>{children}</body></html> }
+
+export const viewport: Viewport = { colorScheme: 'light', themeColor: '#eaf0f3' }
+
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  return <html lang="es" data-scroll-behavior="smooth"><body>{children}</body></html>
+}
