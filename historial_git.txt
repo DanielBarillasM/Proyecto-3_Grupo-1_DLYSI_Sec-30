@@ -1,0 +1,229 @@
+﻿commit aa9cd56396d761c3ae2122d0fc14de8bdbc1bab1
+Author: La Glep Lune <99890584+WiCald@users.noreply.github.com>
+Date:   2026-10-22 12:16:23 -0600
+
+    por si las moscas
+
+commit 403f84c01ea67da68825c82ca29ce2b53f7bf703
+Author: La Glep Lune <99890584+WiCald@users.noreply.github.com>
+Date:   2026-10-22 12:06:39 -0600
+
+    Actualización de archivos.
+
+commit 677ceae01c3eef74891cafd905cfabd546aa15ad
+Author: Daniel Barillas <bar22193@uvg.edu.gt>
+Date:   2026-10-17 18:34:45 -0600
+
+    feat: reorganizing and deleting unnecessary files
+
+ BITACORA.md                                       |  25 ----------------------
+ CONTRIBUCIONES.md                                 |  24 ---------------------
+ presentacion.pdf => presentacion/presentacion.pdf | Bin
+ 3 files changed, 49 deletions(-)
+
+commit 287170a1f0163ca4ddcc388eab704afba1e1acf0
+Author: Daniel Barillas <bar22193@uvg.edu.gt>
+Date:   2026-10-17 18:24:05 -0600
+
+    feat: renovar interfaz con React Bits
+
+ README.md                        |   5 +-
+ web/README.md                    |  72 +++++++-
+ web/app/datos/page.tsx           |  32 +++-
+ web/app/experimentos/page.tsx    |  25 ++-
+ web/app/globals.css              | 347 +++++++++++++++++++++++++++++----------
+ web/app/layout.tsx               |   8 +-
+ web/app/metodologia/page.tsx     |  26 ++-
+ web/app/page.tsx                 | 214 +++++++++++++++++++-----
+ web/components.json              |   5 +-
+ web/components/SpotlightCard.css |  51 ++++++
+ web/components/SpotlightCard.tsx | 323 ++++++++++++++++++++++++++++++++++++
+ web/components/site-header.tsx   |  36 +++-
+ web/components/ui/button.tsx     |   2 +-
+ 13 files changed, 1004 insertions(+), 142 deletions(-)
+
+commit fb18960c67b16cd9eed93d008b11f35ecf9fe4f3
+Author: Daniel Barillas <bar22193@uvg.edu.gt>
+Date:   2026-10-17 08:43:30 -0600
+
+    feat: completar pipeline text-to-sql y aplicación
+
+ .env.example                                       |    8 +
+ .gitattributes                                     |    8 +
+ CONTRIBUCIONES.md                                  |   12 +-
+ README.md                                          |  264 +-
+ adapter/README.md                                  |   12 +-
+ backend/README.md                                  |    5 -
+ backend/__init__.py                                |    1 +
+ backend/main.py                                    |   66 +
+ backend/schemas.py                                 |   42 +
+ backend/service.py                                 |   98 +
+ config.json                                        |    2 +-
+ configuraciones/qlora_r16.json                     |   13 +
+ configuraciones/qlora_r32.json                     |   13 +
+ datos/FUENTES_Y_LICENCIAS.md                       |    7 +
+ datos/README.md                                    |   10 -
+ datos/descartes/descartados.jsonl                  |    0
+ datos/entrenamiento/aceptados.jsonl                | 2592 ++++++++++++++++++++
+ datos/entrenamiento/candidatos.jsonl               | 2592 ++++++++++++++++++++
+ datos/esquemas/train/biblioteca_es/metadata.json   |   36 +
+ datos/esquemas/train/biblioteca_es/schema.sql      |   47 +
+ datos/esquemas/train/biblioteca_es/seed.sql        |  157 ++
+ datos/esquemas/train/cine_es/metadata.json         |   36 +
+ datos/esquemas/train/cine_es/schema.sql            |   47 +
+ datos/esquemas/train/cine_es/seed.sql              |  157 ++
+ datos/esquemas/train/clinica_es/metadata.json      |   36 +
+ datos/esquemas/train/clinica_es/schema.sql         |   47 +
+ datos/esquemas/train/clinica_es/seed.sql           |  157 ++
+ datos/esquemas/train/gimnasio_es/metadata.json     |   36 +
+ datos/esquemas/train/gimnasio_es/schema.sql        |   47 +
+ datos/esquemas/train/gimnasio_es/seed.sql          |  157 ++
+ datos/esquemas/train/hotel_en/metadata.json        |   36 +
+ datos/esquemas/train/hotel_en/schema.sql           |   47 +
+ datos/esquemas/train/hotel_en/seed.sql             |  157 ++
+ datos/esquemas/train/logistica_es/metadata.json    |   36 +
+ datos/esquemas/train/logistica_es/schema.sql       |   47 +
+ datos/esquemas/train/logistica_es/seed.sql         |  157 ++
+ datos/esquemas/train/municipio_es/metadata.json    |   36 +
+ datos/esquemas/train/municipio_es/schema.sql       |   47 +
+ datos/esquemas/train/municipio_es/seed.sql         |  157 ++
+ datos/esquemas/train/restaurante_es/metadata.json  |   36 +
+ datos/esquemas/train/restaurante_es/schema.sql     |   47 +
+ datos/esquemas/train/restaurante_es/seed.sql       |  157 ++
+ datos/esquemas/train/retail_en/metadata.json       |   36 +
+ datos/esquemas/train/retail_en/schema.sql          |   47 +
+ datos/esquemas/train/retail_en/seed.sql            |  157 ++
+ datos/esquemas/train/seguros_es/metadata.json      |   36 +
+ datos/esquemas/train/seguros_es/schema.sql         |   47 +
+ datos/esquemas/train/seguros_es/seed.sql           |  157 ++
+ datos/esquemas/train/telecom_en/metadata.json      |   36 +
+ datos/esquemas/train/telecom_en/schema.sql         |   47 +
+ datos/esquemas/train/telecom_en/seed.sql           |  157 ++
+ datos/esquemas/train/universidad_es/metadata.json  |   36 +
+ datos/esquemas/train/universidad_es/schema.sql     |   47 +
+ datos/esquemas/train/universidad_es/seed.sql       |  157 ++
+ .../validation/aerolinea_val/metadata.json         |   36 +
+ datos/esquemas/validation/aerolinea_val/schema.sql |   47 +
+ datos/esquemas/validation/aerolinea_val/seed.sql   |  157 ++
+ .../esquemas/validation/eventos_val/metadata.json  |   36 +
+ datos/esquemas/validation/eventos_val/schema.sql   |   47 +
+ datos/esquemas/validation/eventos_val/seed.sql     |  157 ++
+ datos/revision_muestra.csv                         |  101 +
+ datos/validacion/preguntas.jsonl                   |   40 +
+ docker-compose.yml                                 |   25 +
+ docs/HANDOFF_V0.md                                 |    2 +
+ docs/PLAN_PROYECTO.md                              |    4 +-
+ informe/main.tex                                   |  174 +-
+ notebooks/01_datos.ipynb                           |  132 +
+ notebooks/02_entrenamiento.ipynb                   |  154 ++
+ notebooks/03_evaluacion.ipynb                      |  138 ++
+ notebooks/README.md                                |    9 -
+ output/pdf/informe.pdf                             |  Bin 0 -> 204279 bytes
+ presentacion.pdf                                   |  Bin 0 -> 95843 bytes
+ presentacion/index.html                            |   31 +-
+ pyproject.toml                                     |   11 +
+ requirements-dev.txt                               |   14 +
+ requirements.txt                                   |    8 +
+ resultados/README.md                               |   12 -
+ resultados/dataset_manifest.json                   |   24 +
+ resultados/resumen.json                            |   20 +
+ resultados/validacion_propia.csv                   |   41 +
+ scripts/README.md                                  |   13 -
+ scripts/audit_delivery.py                          |   28 +
+ scripts/build_notebooks.py                         |  169 ++
+ scripts/generate_data_assets.py                    |  350 +++
+ scripts/run_validation.py                          |  118 +
+ scripts/select_adapter.py                          |   36 +
+ scripts/train_qlora.py                             |  168 ++
+ scripts/validate_mysql.py                          |  155 ++
+ solucion.py                                        |   29 +
+ tests/README.md                                    |   11 -
+ tests/test_api.py                                  |   49 +
+ tests/test_config.py                               |   10 +
+ tests/test_dataset_contract.py                     |   29 +
+ tests/test_evaluation.py                           |   29 +
+ tests/test_solution_contract.py                    |   42 +
+ tests/test_sql_safety.py                           |   28 +
+ text2sql/__init__.py                               |    5 +
+ text2sql/config.py                                 |   35 +
+ text2sql/evaluation.py                             |   88 +
+ text2sql/inference.py                              |   47 +
+ text2sql/prompting.py                              |   32 +
+ text2sql/runtime.py                                |  112 +
+ text2sql/sql_safety.py                             |   64 +
+ web/.env.example                                   |    1 +
+ web/README.md                                      |   16 +
+ web/app/datos/page.tsx                             |    4 +
+ web/app/experimentos/page.tsx                      |    4 +
+ web/app/globals.css                                |  249 +-
+ web/app/layout.tsx                                 |   46 +-
+ web/app/metodologia/page.tsx                       |    4 +
+ web/app/page.tsx                                   |  123 +-
+ web/components/site-header.tsx                     |    4 +
+ web/next.config.mjs                                |   10 +-
+ web/package.json                                   |    6 +-
+ web/pnpm-lock.yaml                                 |   36 +-
+ 115 files changed, 11512 insertions(+), 683 deletions(-)
+
+commit 8a340e108c8f3731761e8066366e25777df3d346
+Author: Daniel Barillas <bar22193@uvg.edu.gt>
+Date:   2026-10-17 08:07:46 -0600
+
+    feat: agregar planificación y aplicación web inicial
+
+ .gitignore                                |   40 +
+ BITACORA.md                               |   25 +
+ CONTRIBUCIONES.md                         |   24 +
+ LICENSE                                   |    2 +-
+ README.md                                 |  205 +-
+ adapter/README.md                         |    3 +
+ backend/README.md                         |    5 +
+ config.json                               |    6 +
+ datos/README.md                           |   10 +
+ datos/descartes/.gitkeep                  |    1 +
+ datos/entrenamiento/.gitkeep              |    1 +
+ datos/esquemas/.gitkeep                   |    1 +
+ datos/validacion/.gitkeep                 |    1 +
+ docs/HANDOFF_V0.md                        |  179 ++
+ docs/PLAN_PROYECTO.md                     |  200 ++
+ docs/enunciado/Proyecto_3_Texto_a_SQL.pdf |  Bin 0 -> 44195 bytes
+ informe/main.tex                          |  154 ++
+ notebooks/README.md                       |    9 +
+ presentacion/index.html                   |  244 ++
+ resultados/README.md                      |   12 +
+ scripts/README.md                         |   13 +
+ tests/README.md                           |   11 +
+ web/.gitignore                            |   16 +
+ web/app/globals.css                       |  167 ++
+ web/app/layout.tsx                        |   46 +
+ web/app/page.tsx                          |   73 +
+ web/components.json                       |   21 +
+ web/components/ui/button.tsx              |   58 +
+ web/next-env.d.ts                         |    7 +
+ web/next.config.mjs                       |   11 +
+ web/package.json                          |   33 +
+ web/pnpm-lock.yaml                        | 3519 +++++++++++++++++++++++++++++
+ web/pnpm-workspace.yaml                   |    5 +
+ web/postcss.config.mjs                    |    8 +
+ web/public/apple-icon.png                 |  Bin 0 -> 2626 bytes
+ web/public/icon-dark-32x32.png            |  Bin 0 -> 585 bytes
+ web/public/icon-light-32x32.png           |  Bin 0 -> 566 bytes
+ web/public/icon.svg                       |   26 +
+ web/public/placeholder-logo.png           |  Bin 0 -> 568 bytes
+ web/public/placeholder-logo.svg           |    1 +
+ web/public/placeholder-user.jpg           |  Bin 0 -> 1635 bytes
+ web/public/placeholder.jpg                |  Bin 0 -> 1064 bytes
+ web/public/placeholder.svg                |    1 +
+ web/tsconfig.json                         |   33 +
+ 44 files changed, 5169 insertions(+), 2 deletions(-)
+
+commit 9f5c6f09fe059c798d9151b243d05b2dc52479d0
+Author: DanielBarillasM <146965525+DanielBarillasM@users.noreply.github.com>
+Date:   2026-10-16 13:56:31 -0600
+
+    Initial commit
+
+ .gitignore | 220 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+ LICENSE    |  21 ++++++
+ README.md  |   1 +
+ 3 files changed, 242 insertions(+)

@@ -160,14 +160,14 @@
           <tr><td>B</td><td class="mono">r=32</td><td>α=32, dropout=.05, datos y semilla</td><td>Mayor capacidad</td></tr>
         </tbody>
       </table>
-      <p style="margin-top:auto">QLoRA 4-bit NF4 · FP16 · gradient checkpointing.</p>
+      <p style="margin-top:auto">Entrenamiento secuencial en GPU CUDA local de 16 GB · QLoRA 4-bit NF4 · FP16 · gradient checkpointing.</p>
       <span class="footer">07 / 12</span>
     </section>
 
     <section class="slide">
       <h2>Entrenamiento y selección</h2>
       <div class="grid-2">
-        <div class="panel"><h3>Espacio reservado</h3><p class="pending">Curvas generadas por las corridas T4.</p></div>
+        <div class="panel"><h3>Espacio reservado</h3><p class="pending">Curvas generadas por las corridas locales.</p></div>
         <div><ul><li>Parámetros entrenables.</li><li>Tiempo y memoria pico.</li><li>EX por dificultad.</li><li>Selección por ejecución, no por loss.</li></ul></div>
       </div>
       <span class="footer">08 / 12</span>
@@ -210,7 +210,7 @@
       <h2>Conclusiones</h2>
       <ol>
         <li>La infraestructura y 2,632 referencias SQL ya están verificadas.</li>
-        <li class="pending">Efecto del fine-tuning: pendiente de T4.</li>
+        <li class="pending">Efecto del fine-tuning: pendiente de las corridas locales.</li>
         <li class="pending">Rango ganador y reparación: pendientes de evaluación.</li>
         <li>Riesgo principal: cambio de dominio hacia esquemas ocultos.</li>
       </ol>

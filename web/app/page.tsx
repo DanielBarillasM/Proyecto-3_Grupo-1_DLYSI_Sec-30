@@ -197,7 +197,7 @@ export default function Page() {
             <div><dt>Pares aceptados</dt><dd>2,592</dd><span>Entrenamiento</span></div>
             <div><dt>Esquemas</dt><dd>12</dd><span>Sin fuga</span></div>
             <div><dt>Validación</dt><dd>40</dd><span>Casos congelados</span></div>
-            <div><dt>EX del modelo</dt><dd className="pending">Pendiente</dd><span>Después de T4</span></div>
+            <div><dt>EX del modelo</dt><dd className="pending">Pendiente</dd><span>Después del entrenamiento local</span></div>
           </dl>
         </section>
 

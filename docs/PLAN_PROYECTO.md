@@ -2,7 +2,7 @@
 
 ## 1. Resultado esperado
 
-El 25 de octubre de 2026 el repositorio debe permitir que el docente instale `requirements.txt` en Google Colab con GPU T4, cargue el modelo en menos de cinco minutos y llame:
+El entrenamiento se ejecutará en la estación local del equipo, con 32 núcleos de CPU y una GPU CUDA de 16 GB de VRAM. El 25 de octubre de 2026 el repositorio debe permitir además que el docente instale `requirements.txt` en Google Colab con GPU T4, cargue el modelo en menos de cinco minutos y llame:
 
 ```python
 generar_sql(esquema: str, pregunta: str, ejecutar=None) -> str
@@ -26,7 +26,8 @@ El éxito se decidirá principalmente por dos cifras:
 - Constantes entre A y B: `lora_alpha=32`, `lora_dropout=0.05`, módulos objetivo, dataset, orden de ejemplos, semilla, épocas, learning rate, scheduler, batch efectivo, prompt y evaluación.
 - Módulos objetivo iniciales: `q_proj`, `k_proj`, `v_proj`, `o_proj`, `gate_proj`, `up_proj`, `down_proj`.
 - Semilla: `2026` para Python, NumPy, PyTorch, partición y generación.
-- Punto de partida: 2 épocas, learning rate `2e-4`, batch por dispositivo 1, acumulación 16, gradient checkpointing y secuencia máxima 2,048 tokens.
+- Punto de partida: 2 épocas, learning rate `2e-4`, batch por dispositivo 1, acumulación 16, gradient checkpointing y secuencia máxima 2,048 tokens. Las dos corridas se ejecutan secuencialmente en la GPU local.
+- Los adapters experimentales y checkpoints se guardan fuera de Git; sólo el ganador se copia a `adapter/`.
 - Regla de longitud: medir truncamiento antes de entrenar; ampliar contexto o filtrar de forma documentada si más de 1% de los ejemplos pierde SQL o partes críticas del esquema.
 
 La hipótesis registrada antes del entrenamiento será: **aumentar el rango de 16 a 32 mejora consultas de dificultad media y difícil al aportar capacidad para relaciones y composición SQL, a costa de más parámetros y tiempo; la mejora puede ser nula si el límite real es calidad de datos**.
@@ -118,8 +119,8 @@ La tabla describe propiedad, no exclusividad. Cada cambio deberá salir de la cu
 | Sáb 17 oct | MySQL 8.4.10 reproducible, formato de datos y primeros esquemas |
 | Dom 18 oct | Conversión/traducción y 2,500+ candidatos con log de descartes |
 | Lun 19 oct | Dataset final, validación congelada, evaluador y baseline B0 |
-| Mar 20 oct | Hipótesis firmada y entrenamiento QLoRA A |
-| Mié 21 oct | Entrenamiento QLoRA B y comparación controlada |
+| Mar 20 oct | Hipótesis firmada y entrenamiento local QLoRA A |
+| Mié 21 oct | Entrenamiento local QLoRA B y comparación controlada |
 | Jue 22 oct | Experimento I0/I1, análisis de errores y selección de adapter |
 | Vie 23 oct | Ensayo completo en Colab T4, pruebas de contrato y tiempos |
 | Sáb 24 oct | Informe, UI, presentación HTML y exportación PDF |
@@ -138,7 +139,7 @@ Rutas previstas:
 - `/datos`: cobertura de esquemas, distribución y descartes.
 - `/metodologia`: contrato, arquitectura, equipo y límites del proyecto.
 
-La UI se genera con el [handoff de v0](HANDOFF_V0.md). En la primera iteración usará fixtures realistas; la integración real se hará detrás de una interfaz tipada `TextToSqlClient`.
+La UI ya está implementada en `web/` con fixtures explícitamente identificados y una interfaz tipada `TextToSqlClient`. La integración real usa el backend FastAPI opcional y se activa con `NEXT_PUBLIC_USE_LIVE_API=true`; el build estático no depende de Python ni de los pesos.
 
 ## 8. Informe y presentación
 
@@ -153,7 +154,7 @@ La presentación se mantiene como HTML autocontenido en `presentacion/index.html
 | Fuga de esquemas | IDs o DDL repetidos entre splits | Hash estructural y test automático de intersección |
 | SQL válido pero semánticamente pobre | Loss baja y EX estancada | Auditar datos, balancear dificultad y revisar joins/agregaciones |
 | Incompatibilidad de dialecto | Alta tasa de error en MySQL | Ejecutar cada par; reglas explícitas para fechas, límites y funciones |
-| OOM en T4 | Fallo al iniciar o secuencias largas | QLoRA 4-bit, batch 1, checkpointing y análisis de longitudes |
+| OOM en GPU local | Fallo al iniciar o secuencias largas | Cerrar otros procesos, QLoRA 4-bit, batch 1, checkpointing y análisis de longitudes; aplicar cualquier cambio a ambas corridas |
 | Inferencia >30 s | p95 cercano al límite | Limitar tokens, máximo una reparación y medir con T4 real |
 | Dependencias rotas | Instalación no reproducible | Fijar versiones después de la prueba limpia, no antes |
 | Adapter ausente en ZIP | Puntero LFS o ruta incorrecta | Inspección del ZIP y carga offline antes de enviar |

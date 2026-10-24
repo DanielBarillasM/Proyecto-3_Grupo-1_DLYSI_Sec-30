@@ -12,10 +12,17 @@ ROOT = Path(__file__).resolve().parents[1]
 def save(name: str, title: str, cells: list) -> None:
     path = ROOT / "notebooks" / name
     notebook = nbformat.read(path, as_version=4)
-    notebook["cells"] = [
+    previous_cells = list(notebook["cells"])
+    updated_cells = [
         new_markdown_cell(f"# {title}\n\nProyecto 3 · Deep Learning y Sistemas Inteligentes · Sección 30"),
         *cells,
     ]
+    for index, cell in enumerate(updated_cells):
+        if index < len(previous_cells) and previous_cells[index]["cell_type"] == cell["cell_type"]:
+            previous_id = previous_cells[index].get("id")
+            if previous_id:
+                cell["id"] = previous_id
+    notebook["cells"] = updated_cells
     notebook["metadata"]["kernelspec"] = {
         "display_name": "Python 3",
         "language": "python",
@@ -35,6 +42,12 @@ if ROOT.name == "notebooks":
     ROOT = ROOT.parent
 assert (ROOT / "config.json").exists(), "Ejecuta el notebook desde la raíz o notebooks/."
 SEED = 2026"""
+    artifact_setup = setup.replace("import json\n", "import json\nimport os\n").replace(
+        "SEED = 2026",
+        'ARTIFACTS = Path(os.environ.get("PROJECT3_ARTIFACTS", ROOT.parent / "artifacts_locales"))\n'
+        "ARTIFACTS.mkdir(parents=True, exist_ok=True)\n"
+        "SEED = 2026",
+    )
     save(
         "01_datos.ipynb",
         "Preparación y validación de datos",
@@ -80,12 +93,16 @@ SEED = 2026"""
                 "## Hipótesis registrada antes de entrenar\n\n"
                 "Aumentar `r` de 16 a 32 puede mejorar consultas medias y difíciles al añadir capacidad para relaciones y composición SQL, a cambio de más parámetros y tiempo. La ganancia puede ser nula si el límite es la calidad de los datos."
             ),
-            new_code_cell(setup),
-            new_markdown_cell("## 1. Verificación de entorno T4"),
+            new_code_cell(artifact_setup),
+            new_markdown_cell(
+                "## 1. Verificación de la estación local\n\n"
+                "El entrenamiento se ejecuta localmente. Colab/T4 se reserva para la prueba final de compatibilidad con el entorno del docente."
+            ),
             new_code_cell(
                 "import torch\n"
-                "assert torch.cuda.is_available(), 'Activa GPU T4 en Colab.'\n"
-                "print(torch.cuda.get_device_name(0))"
+                "assert torch.cuda.is_available(), 'Se requiere una GPU CUDA local compatible.'\n"
+                "properties = torch.cuda.get_device_properties(0)\n"
+                "print({'gpu': torch.cuda.get_device_name(0), 'vram_gib': round(properties.total_memory / 1024**3, 2)})"
             ),
             new_markdown_cell("## 2. Confirmar que solo cambia el rango LoRA"),
             new_code_cell(
@@ -100,19 +117,21 @@ SEED = 2026"""
                 "Ejecuta primero dos pasos por configuración. Si ambos terminan, quita `--smoke` para las corridas reales."
             ),
             new_code_cell(
-                "RUN_TRAINING = False  # Cambiar a True únicamente en Colab T4.\n"
+                "RUN_TRAINING = False  # Cambiar a True después de aprobar el preflight CUDA local.\n"
                 "if RUN_TRAINING:\n"
                 "    for name in ('qlora_r16', 'qlora_r32'):\n"
-                "        subprocess.run([sys.executable, str(ROOT / 'scripts/train_qlora.py'), '--config', str(ROOT / f'configuraciones/{name}.json'), '--output', str(ROOT / f'resultados/adapters/{name}'), '--smoke'], check=True)\n"
+                "        output = ARTIFACTS / 'smoke' / name\n"
+                "        subprocess.run([sys.executable, str(ROOT / 'scripts/train_qlora.py'), '--config', str(ROOT / f'configuraciones/{name}.json'), '--output', str(output), '--smoke'], check=True)\n"
                 "else:\n"
-                "    print('Espacio preparado. Activa RUN_TRAINING en T4.')"
+                "    print(f'Espacio preparado en {ARTIFACTS}. Activa RUN_TRAINING en la estación local.')"
             ),
             new_markdown_cell("## 4. Corridas completas"),
             new_code_cell(
                 "RUN_FULL_TRAINING = False\n"
                 "if RUN_FULL_TRAINING:\n"
                 "    for name in ('qlora_r16', 'qlora_r32'):\n"
-                "        subprocess.run([sys.executable, str(ROOT / 'scripts/train_qlora.py'), '--config', str(ROOT / f'configuraciones/{name}.json'), '--output', str(ROOT / f'resultados/adapters/{name}')], check=True)"
+                "        output = ARTIFACTS / 'runs' / name\n"
+                "        subprocess.run([sys.executable, str(ROOT / 'scripts/train_qlora.py'), '--config', str(ROOT / f'configuraciones/{name}.json'), '--output', str(output)], check=True)"
             ),
             new_markdown_cell(
                 "## Artefactos esperados\n\nCada directorio contiene adapter, tokenizer, `run_metrics.json` y `log_history.json`. No selecciones por loss: la decisión final se toma por EX ponderada en el notebook 03."
@@ -126,20 +145,18 @@ SEED = 2026"""
             new_markdown_cell(
                 "## Objetivo\n\nComparar baseline, QLoRA r=16, QLoRA r=32 y el experimento de reparación sobre los mismos 2 esquemas inéditos y 40 ejemplos."
             ),
-            new_code_cell(setup),
+            new_code_cell(artifact_setup),
             new_markdown_cell("## 1. Ejecutar las corridas"),
             new_code_cell(
                 "RUN_EVALUATION = False  # Activar cuando los adapters existan.\n"
                 "commands = [\n"
-                "    'python scripts/run_validation.py --name baseline',\n"
-                "    'python scripts/run_validation.py --name qlora_r16 --adapter resultados/adapters/qlora_r16',\n"
-                "    'python scripts/run_validation.py --name qlora_r32 --adapter resultados/adapters/qlora_r32',\n"
+                "    [sys.executable, str(ROOT / 'scripts/run_validation.py'), '--name', 'baseline'],\n"
+                "    [sys.executable, str(ROOT / 'scripts/run_validation.py'), '--name', 'qlora_r16', '--adapter', str(ARTIFACTS / 'runs/qlora_r16')],\n"
+                "    [sys.executable, str(ROOT / 'scripts/run_validation.py'), '--name', 'qlora_r32', '--adapter', str(ARTIFACTS / 'runs/qlora_r32')],\n"
                 "]\n"
                 "if RUN_EVALUATION:\n"
-                "    import shlex, subprocess, sys\n"
                 "    for command in commands:\n"
-                "        parts = shlex.split(command)[1:]\n"
-                "        subprocess.run([sys.executable, str(ROOT / 'scripts/run_validation.py'), *parts], check=True)\n"
+                "        subprocess.run(command, check=True)\n"
                 "commands"
             ),
             new_markdown_cell("## 2. Comparar EX y elegir adapter"),
@@ -154,8 +171,8 @@ SEED = 2026"""
             ),
             new_code_cell(
                 "# Ejemplo:\n"
-                "# !python scripts/run_validation.py --name ganador_directo --adapter resultados/adapters/qlora_rXX\n"
-                "# !python scripts/run_validation.py --name ganador_repair --adapter resultados/adapters/qlora_rXX --repair"
+                "# Sustituye qlora_rXX por el ganador bajo ARTIFACTS / 'runs'.\n"
+                "# Ejecuta una corrida directa y otra con --repair usando scripts/run_validation.py."
             ),
             new_markdown_cell(
                 "## 4. Selección y análisis\n\n"

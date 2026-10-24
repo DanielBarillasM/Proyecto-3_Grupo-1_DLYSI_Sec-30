@@ -16,5 +16,5 @@
   },
   "selected_adapter": null,
   "hidden_ex_prediction": null,
-  "note": "No se publican métricas hasta ejecutar las corridas reales en GPU T4."
+  "note": "No se publican métricas hasta ejecutar las corridas reales en la estación local con GPU CUDA de 16 GB. La T4 se reserva únicamente para la comprobación final de compatibilidad con el entorno docente."
 }

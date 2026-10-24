@@ -9,11 +9,13 @@
 \hypersetup{colorlinks=true,linkcolor=teal,urlcolor=rust,pdftitle={Text-to-SQL con QLoRA},pdfauthor={Wilson Calderón y Pablo Barillas}}
 \pagestyle{fancy}\fancyhf{}\lhead{\small\color{teal}Text-to-SQL con QLoRA}\rhead{\small\color{teal}Proyecto 3}\cfoot{\thepage}\renewcommand{\headrulewidth}{.4pt}
 \newtcolorbox{resultado}[1]{colback=paper,colframe=teal,boxrule=.7pt,arc=1mm,title=\textbf{#1},coltitle=ink}
-\newcommand{\pendiente}{\textcolor{rust}{\textbf{Pendiente de la corrida T4}}}
+\newcommand{\pendiente}{\textcolor{rust}{\textbf{Pendiente de la corrida local}}}
+\newcommand{\pendingcell}{\textcolor{rust}{\textbf{Pendiente}}}
 \newcommand{\code}[1]{\texttt{#1}}
 \begin{document}
+\pagenumbering{gobble}
 \begin{titlepage}\color{ink}\vspace*{1cm}
-{\small UNIVERSIDAD DEL VALLE DE GUATEMALA \hfill SECCIÓN 30\par}\vspace{.25cm}{\color{teal}\rule{\textwidth}{2pt}}\vspace{1.5cm}
+\noindent{\small\begin{tabularx}{\textwidth}{@{}Xr@{}}UNIVERSIDAD DEL VALLE DE GUATEMALA&SECCIÓN 30\end{tabularx}}\par\vspace{.25cm}\noindent{\color{teal}\rule{\textwidth}{2pt}\par}\vspace{1.5cm}
 {\Huge\bfseries Text-to-SQL con QLoRA\par}\vspace{.35cm}{\Large Traducción reproducible de preguntas en español a MySQL\par}\vspace{1.2cm}
 \begin{resultado}{Objetivo}Ajustar Qwen2.5-Coder-1.5B-Instruct mediante QLoRA y medir exactitud de ejecución sobre esquemas inéditos, conservando una ruta de inferencia local, determinista y auditable.\end{resultado}
 \vfill
@@ -21,10 +23,11 @@
 
 Deep Learning y Sistemas Inteligentes\\2026
 \end{titlepage}
+\pagenumbering{arabic}
 \tableofcontents\clearpage
 
 \section{Resumen}
-Se construyó una canalización completa para generar SQL de lectura a partir de un esquema y una pregunta en español. La base experimental contiene 2,592 pares aceptados sobre 12 esquemas de entrenamiento y 40 preguntas sobre dos esquemas inéditos. Todas las consultas de referencia se ejecutaron sin error en MySQL 8.4.10 con \code{ONLY\_FULL\_GROUP\_BY}. El repositorio implementa dos configuraciones QLoRA que difieren únicamente en el rango, evaluación por ejecución y una reparación opcional. Al momento de congelar este borrador, las corridas en GPU T4 aún no se habían realizado; por integridad académica, sus métricas se reservan explícitamente.
+Se construyó una canalización completa para generar SQL de lectura a partir de un esquema y una pregunta en español. La base experimental contiene 2,592 pares aceptados sobre 12 esquemas de entrenamiento y 40 preguntas sobre dos esquemas inéditos. Todas las consultas de referencia se ejecutaron sin error en MySQL 8.4.10 con \code{ONLY\_FULL\_GROUP\_BY}. El repositorio implementa dos configuraciones QLoRA que difieren únicamente en el rango, evaluación por ejecución y una reparación opcional. Al momento de congelar este borrador, las corridas en la GPU CUDA local aún no se habían realizado; por integridad académica, sus métricas se reservan explícitamente. La GPU T4 se conserva únicamente como entorno final de compatibilidad del docente.
 \begin{resultado}{Resultado principal}Baseline: \pendiente. QLoRA $r=16$: \pendiente. QLoRA $r=32$: \pendiente.\end{resultado}
 
 \section{Problema y contrato}
@@ -55,7 +58,7 @@ La exactitud por ejecución (EX) compara resultados normalizados: redondeo numé
 
 \section{Resultados}
 \begin{table}[H]\centering\caption{Tabla preparada para resultados reproducibles.}
-\begin{tabular}{@{}lccc@{}}\toprule Variante&EX ponderada&Tasa ejecutable&Latencia p95\\\midrule Baseline&\pendiente&\pendiente&\pendiente\\QLoRA $r=16$&\pendiente&\pendiente&\pendiente\\QLoRA $r=32$&\pendiente&\pendiente&\pendiente\\Ganador + reparación&\pendiente&\pendiente&\pendiente\\\bottomrule\end{tabular}\end{table}
+\begin{tabular}{@{}lccc@{}}\toprule Variante&EX ponderada&Tasa ejecutable&Latencia p95\\\midrule Baseline&\pendingcell&\pendingcell&\pendingcell\\QLoRA $r=16$&\pendingcell&\pendingcell&\pendingcell\\QLoRA $r=32$&\pendingcell&\pendingcell&\pendingcell\\Ganador + reparación&\pendingcell&\pendingcell&\pendingcell\\\bottomrule\end{tabular}\end{table}
 
 Las curvas de pérdida, parámetros entrenables, minutos de entrenamiento, memoria pico y EX por dificultad se insertarán desde los JSON y CSV generados por los scripts. Se conservarán resultados negativos y todos los fallos se clasificarán como sintaxis, entidad inexistente, \code{JOIN}, agregación, filtro o resultado distinto.
 
@@ -63,7 +66,7 @@ Las curvas de pérdida, parámetros entrenables, minutos de entrenamiento, memor
 El entorno SQL se fija mediante Docker en MySQL 8.4.10. Los tres notebooks recorren datos, entrenamiento y evaluación en orden. Diecisiete pruebas locales cubren configuración, seguridad SQL, normalización de resultados, contrato oficial, API y dataset. El principal riesgo restante es el cambio de dominio entre esquemas sintéticos y evaluación oculta; se mitigará reportando EX por dificultad y una predicción conservadora, nunca sustituyendo datos faltantes por estimaciones presentadas como mediciones.
 
 \section{Conclusiones}
-La infraestructura, los datos y la evaluación están listos y verificados. El proyecto separa con claridad lo medido de lo todavía pendiente. Las conclusiones sobre el efecto del fine-tuning, el rango ganador y la utilidad de la reparación solo podrán escribirse después de las corridas T4. Esta decisión mantiene trazabilidad y evita sobreinterpretar resultados inexistentes.
+La infraestructura, los datos y la evaluación están listos y verificados. El proyecto separa con claridad lo medido de lo todavía pendiente. Las conclusiones sobre el efecto del fine-tuning, el rango ganador y la utilidad de la reparación sólo podrán escribirse después de las corridas locales. Esta decisión mantiene trazabilidad y evita sobreinterpretar resultados inexistentes. La entrega final deberá probarse además en una T4 limpia, sin reentrenar, para reproducir el entorno del evaluador.
 
 \section*{Uso de inteligencia artificial}
 OpenAI Codex apoyó el análisis del enunciado, la implementación, la estructura documental y la revisión técnica; v0 se utilizó como punto de partida visual. Los integrantes deben revisar los artefactos, completar la revisión humana y ser capaces de explicar el código. Ninguna API externa participa en la generación SQL evaluada.

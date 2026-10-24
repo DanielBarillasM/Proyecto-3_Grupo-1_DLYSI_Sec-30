@@ -16,7 +16,7 @@ export default function Metodologia() {
         </header>
         <section className="content-grid" aria-label="Etapas metodológicas">
           <article className="content-card"><h2>01 · Preparar</h2><p>Generar, deduplicar y ejecutar todos los SQL. Congelar validación antes de entrenar.</p></article>
-          <article className="content-card"><h2>02 · Entrenar</h2><p>Ejecutar pruebas rápidas y dos corridas QLoRA en GPU T4 con semilla 2026.</p></article>
+          <article className="content-card"><h2>02 · Entrenar</h2><p>Ejecutar pruebas rápidas y dos corridas QLoRA secuenciales en la GPU CUDA local con semilla 2026.</p></article>
           <article className="content-card"><h2>03 · Evaluar</h2><p>Comparar resultados normalizados y clasificar cada fallo.</p></article>
           <article className="content-card"><h2>04 · Seleccionar</h2><p>Copiar el ganador a <code>adapter/</code> y activar <code>usar_adapter</code>.</p></article>
           <article className="content-card"><h2>05 · Auditar</h2><p>Ejecutar pruebas, compilar entregables y repetir desde un entorno limpio.</p></article>

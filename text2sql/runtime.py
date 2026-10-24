@@ -29,7 +29,7 @@ class TextToSQLRuntime:
                 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
             except ImportError as exc:
                 raise RuntimeError(
-                    "Faltan dependencias del modelo. Instala requirements.txt en el entorno T4."
+                    "Faltan dependencias del modelo. Instala requirements.txt en el entorno local de ejecución."
                 ) from exc
 
             random.seed(self.config.semilla)

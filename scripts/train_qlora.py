@@ -1,9 +1,12 @@
 from __future__ import annotations
 
 import argparse
+import importlib.metadata
 import json
 import os
+import platform
 import random
+import subprocess
 import time
 from pathlib import Path
 
@@ -12,11 +15,28 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description="Entrena una configuración QLoRA en GPU T4.")
+    parser = argparse.ArgumentParser(description="Entrena una configuración QLoRA en una GPU CUDA local compatible.")
     parser.add_argument("--config", required=True, type=Path, help="JSON de configuraciones/.")
     parser.add_argument("--output", required=True, type=Path, help="Directorio de salida del adapter.")
     parser.add_argument("--smoke", action="store_true", help="Usa 32 ejemplos y 2 pasos para validar el pipeline.")
+    parser.add_argument("--resume-from-checkpoint", type=Path, help="Checkpoint local desde el cual reanudar.")
     return parser.parse_args()
+
+
+def package_version(name: str) -> str:
+    try:
+        return importlib.metadata.version(name)
+    except importlib.metadata.PackageNotFoundError:
+        return "not-installed"
+
+
+def git_commit() -> str:
+    try:
+        return subprocess.check_output(
+            ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, timeout=10
+        ).strip()
+    except (OSError, subprocess.SubprocessError):
+        return "unknown"
 
 
 def main() -> None:
@@ -38,7 +58,10 @@ def main() -> None:
     from text2sql.prompting import build_prompt
 
     if not torch.cuda.is_available():
-        raise RuntimeError("Se requiere GPU CUDA; usa Google Colab con T4.")
+        raise RuntimeError(
+            "Se requiere una GPU CUDA local compatible. Verifica el driver NVIDIA, "
+            "PyTorch CUDA y bitsandbytes antes de entrenar."
+        )
     config = json.loads((ROOT / args.config).read_text(encoding="utf-8"))
     project = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
     seed = int(config["seed"])
@@ -131,6 +154,7 @@ def main() -> None:
         metric_for_best_model="eval_loss",
         greater_is_better=False,
         report_to="none",
+        save_safetensors=True,
         seed=seed,
         data_seed=seed,
         max_steps=2 if args.smoke else -1,
@@ -142,8 +166,10 @@ def main() -> None:
         eval_dataset=eval_dataset,
         data_collator=DataCollatorForSeq2Seq(tokenizer=tokenizer, padding=True, label_pad_token_id=-100),
     )
+    torch.cuda.reset_peak_memory_stats()
     started = time.perf_counter()
-    result = trainer.train()
+    checkpoint = (ROOT / args.resume_from_checkpoint).resolve() if args.resume_from_checkpoint else None
+    result = trainer.train(resume_from_checkpoint=str(checkpoint) if checkpoint else None)
     duration = time.perf_counter() - started
     trainer.save_model(str(output))
     tokenizer.save_pretrained(str(output))
@@ -157,6 +183,20 @@ def main() -> None:
         "trainable_parameters": sum(p.numel() for p in model.parameters() if p.requires_grad),
         "total_parameters": sum(p.numel() for p in model.parameters()),
         "gpu": torch.cuda.get_device_name(0),
+        "gpu_total_memory_gib": round(torch.cuda.get_device_properties(0).total_memory / 1024**3, 3),
+        "gpu_peak_allocated_gib": round(torch.cuda.max_memory_allocated() / 1024**3, 3),
+        "gpu_peak_reserved_gib": round(torch.cuda.max_memory_reserved() / 1024**3, 3),
+        "environment": {
+            "git_commit": git_commit(),
+            "python": platform.python_version(),
+            "platform": platform.platform(),
+            "pytorch": torch.__version__,
+            "cuda_runtime": torch.version.cuda,
+            "transformers": package_version("transformers"),
+            "peft": package_version("peft"),
+            "accelerate": package_version("accelerate"),
+            "bitsandbytes": package_version("bitsandbytes"),
+        },
         "config": config,
     }
     (output / "run_metrics.json").write_text(json.dumps(metrics, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

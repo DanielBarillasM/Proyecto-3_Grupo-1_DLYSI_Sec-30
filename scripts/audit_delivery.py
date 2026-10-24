@@ -8,7 +8,21 @@ ROOT = Path(__file__).resolve().parents[1]
 def main() -> None:
     manifest = json.loads((ROOT / "resultados/dataset_manifest.json").read_text(encoding="utf-8"))
     config = json.loads((ROOT / "config.json").read_text(encoding="utf-8"))
-    required = ["solucion.py", "config.json", "requirements.txt", "informe/main.tex", "presentacion/index.html", "resultados/validacion_propia.csv"]
+    required = [
+        "solucion.py",
+        "config.json",
+        "requirements.txt",
+        "adapter/README.md",
+        "datos/revision_muestra.csv",
+        "informe/main.tex",
+        "output/pdf/informe.pdf",
+        "presentacion/index.html",
+        "presentacion.pdf",
+        "resultados/validacion_propia.csv",
+        "BITACORA.md",
+        "CONTRIBUCIONES.md",
+        "historial_git.txt",
+    ]
     missing = [path for path in required if not (ROOT / path).exists()]
     adapter_ready = (ROOT / "adapter/adapter_config.json").exists()
     checks = {

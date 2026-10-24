@@ -19,7 +19,7 @@ export default function Experimentos() {
           <article className="content-card"><h2>QLoRA r=16</h2><p>Configuración A; alpha 32 y dropout 0.05.</p><strong>EX pendiente</strong></article>
           <article className="content-card"><h2>QLoRA r=32</h2><p>Configuración B; únicamente cambia el rango.</p><strong>EX pendiente</strong></article>
           <article className="content-card wide"><h2>Criterio de selección</h2><p>14 preguntas fáciles × 1, 14 medias × 2 y 12 difíciles × 3. Después se compara inferencia directa contra una única reparación guiada por el error de MySQL.</p></article>
-          <article className="content-card"><h2>Espacio reservado</h2><p>Las curvas, EX por dificultad y análisis de errores aparecerán aquí después de las corridas en T4.</p></article>
+          <article className="content-card"><h2>Espacio reservado</h2><p>Las curvas, EX por dificultad y análisis de errores aparecerán aquí después de las corridas en la GPU local.</p></article>
         </section>
       </main>
     </>
